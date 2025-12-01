@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BB84 Quantum Key Distribution — Real-World Applications</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>BB84 Quantum Key Distribution — Interactive Tutorial</h1>
+    <p class="sub">
+      Explore how Alice & Bob generate a secret key, how eavesdropping raises errors, and how we decide to <b>accept or abort</b> a real link.
+    </p>
+  </header>
+
+  <main>
+    <!-- INTRO -->
+    <section class="card intro">
+      <h2>What is QKD?</h2>
+      <p>
+        QKD lets two parties (<b>Alice</b> and <b>Bob</b>) create a shared secret key by sending single photons.
+        If anyone (<b>Eve</b>) listens, quantum mechanics guarantees disturbances that show up as a higher
+        <b>Quantum Bit Error Rate (QBER)</b>.
+      </p>
+    </section>
+
+    <!-- SCENARIOS -->
+    <section class="card">
+      <h2>Real-World Scenarios</h2>
+      <div class="row">
+        <label>Choose a scenario</label>
+        <select id="scenario">
+          <option value="bank">Bank branch ↔ Data center (metro fiber)</option>
+          <option value="smartgrid">Smart grid meters (noisy access network)</option>
+          <option value="hospital">Hospital ↔ Cloud (EHR sync)</option>
+          <option value="satellite">Satellite downlink (intermittent/noisy)</option>
+          <option value="adversarial">Adversarial campus link (Eve present)</option>
+        </select>
+      </div>
+      <p id="scenarioNote" class="muted small">Scenario notes will appear here.</p>
+    </section>
+
+    <!-- CONTROLS -->
+    <section class="controls card">
+      <h2>Interactive Simulation</h2>
+      <p class="muted small">Adjust parameters and click <b>Run Simulation</b>.</p>
+
+      <div class="row">
+        <label>Qubits (photons): <span id="nLabel">32</span></label>
+        <input id="nQubits" type="range" min="8" max="128" step="8" value="32">
+      </div>
+
+      <div class="row">
+        <label>Eve intercept rate: <span id="eveLabel">0%</span></label>
+        <input id="eveRate" type="range" min="0" max="100" step="5" value="0">
+      </div>
+
+      <div class="row">
+        <label>Channel noise: <span id="noiseLabel">2%</span></label>
+        <input id="noise" type="range" min="0" max="20" step="1" value="2">
+      </div>
+
+      <div class="row">
+        <label>Reveal fraction (sample for QBER): <span id="revealLabel">25%</span></label>
+        <input id="reveal" type="range" min="10" max="50" step="5" value="25">
+      </div>
+
+      <div class="row check">
+        <label><input id="eveToggle" type="checkbox"> Enable Eve (the eavesdropper)</label>
+      </div>
+
+      <div class="row">
+        <label>QBER threshold (abort if above)</label>
+        <input id="qberThresh" type="number" min="5" max="20" value="11"> %
+      </div>
+
+      <div class="buttons">
+        <button id="runBtn">Run Simulation</button>
+        <button id="clearBtn" class="secondary">Clear</button>
+      </div>
+    </section>
+
+    <!-- DECISION BANNER + RESULTS -->
+    <section class="card">
+      <div class="flex-row">
+        <h2>Decision & Results</h2>
+        <button id="downloadBtn" class="secondary" disabled>Download JSON</button>
+      </div>
+
+      <div id="decisionBanner" class="decision neutral">Run the simulation to make a decision.</div>
+
+      <div class="metrics">
+        <p><b>Matched bases (sifted length):</b> <span id="kept">—</span></p>
+        <p><b>Revealed indices:</b> <span id="revealed">—</span></p>
+        <p><b>QBER (error rate):</b> <span id="qber">—</span></p>
+        <p><b>Derived key:</b> <span id="finalKey" class="mono small">—</span></p>
+        <p><b>Key yield:</b> <span id="yield">—</span> <span class="muted small">(derived_key_bits / matched_bases)</span></p>
+      </div>
+
+      <div id="explain" class="explain">A plain-language explanation will appear here after you run.</div>
+    </section>
+
+    <!-- ANIMATION -->
+    <section class="card">
+      <h2>Visualization</h2>
+      <p class="muted small">
+        Each circle is a photon from Alice. Color = bit (1 = blue, 0 = grey). Solid border = “+” basis, dashed = “×”.
+        Green glow → bases match (Bob gets the right bit). Red glow → mismatch (random).
+      </p>
+      <div id="animationArea" class="animation-area"></div>
+      <p id="animCaption" class="anim-caption small">Run the simulation to see photons flow.</p>
+    </section>
+
+    <!-- OTP -->
+    <section class="card">
+      <h2>One-Time Pad (Toy)</h2>
+      <p class="muted small">Encrypt/decrypt using the derived key (educational demo, not production-secure).</p>
+      <input id="msg" type="text" value="hello quantum world">
+      <div class="buttons">
+        <button id="encBtn">Encrypt</button>
+        <button id="decBtn" class="secondary">Decrypt</button>
+      </div>
+      <div class="grid2">
+        <div><p class="muted small">Ciphertext (hex)</p><pre id="ct" class="mono small">—</pre></div>
+        <div><p class="muted small">Decrypted</p><pre id="pt" class="mono small">—</pre></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p class="muted small">This tutorial demonstrates QKD decisions (accept/abort) and how keys can be used in real applications.</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
